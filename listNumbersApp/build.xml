@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<project name="listNumbersApp" basedir="." default="buildwar">
+	<property file="build.properties"/>
+
+	<path id="master-classpath">
+		<fileset dir="${lib.path}">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement path="${build.path}"/>
+	</path>
+
+	<target name="clean" description="Compile main source tree java files">
+		<delete>
+			<fileset dir=".">
+				<include name="*.war"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="buildwar" description="Compile main source tree java files">
+		<mkdir dir="${build.path}"/>
+		<javac destdir="${build.path}" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.path}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+		<copy todir="${web.path}/WEB-INF/lib" includeEmptyDirs="false">
+			<fileset dir="${lib.path}"/>
+		</copy>
+		<war destfile="${name}.war" webxml="${web.path}/WEB-INF/web.xml">
+			<fileset dir="${web.path}">
+				<include name="**/*.*"/>
+			</fileset>
+		</war>
+	</target>
+
+	<target name="deploywar" depends="buildwar" description="Deploy the war">
+		<delete>
+			<fileset dir="${deploy.path}">
+				<include name="${name}.war"/>
+			</fileset>
+		</delete>
+		<copy todir="${deploy.path}" includeEmptyDirs="false">
+			<fileset dir=".">
+				<include name="*.war"/>
+			</fileset>
+		</copy>
+	</target>
+
+</project>
